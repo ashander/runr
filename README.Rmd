@@ -1,0 +1,44 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+runr: a tidy simulation runner
+=============================
+
+runr provides an opinionated wrapper to run simulations and recover tidy output.
+
+The packages exports one function, `run`, which runs a function with some
+varying parameters, and some fixed parameters. `run`, expects the varying
+parameters in a data.frame and the fixed parameters in a list or environment.
+It returns the results in an data.frame that can be `cbind`-ed to the input
+data.frame.
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+
+# Example usage:
+```{r, run-ex}
+require(devtools)
+devtools::run_examples('.')
+```
+
+# Details
+Better to install the package and do `require(runr); ?run`, but here's an ugly
+preview of the help file:
+
+```{r, help}
+cat(readLines('man/run.Rd'), sep = '\n')
+```
+
+# Install
+`devtools::install_github('ashander/runr')`
