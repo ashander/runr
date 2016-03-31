@@ -4,3 +4,5 @@
 ^README-.*\.png$
 scratch.txt
 .*.*.swp
+^\.travis\.yml$
+^cran-comments\.md$

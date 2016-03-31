@@ -17,6 +17,9 @@ parameters in a data.frame and the fixed parameters in a list or environment.
 It returns the results in an data.frame that can be `cbind`-ed to the input
 data.frame.
 
+[![Travis-CI Build Status](https://travis-ci.org/ashander/runr.svg?branch=master)](https://travis-ci.org/ashander/runr)
+[![Coverage Status](https://img.shields.io/codecov/c/github/ashander/runr/master.svg)](https://codecov.io/github/ashander/runr?branch=master)
+
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,

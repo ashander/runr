@@ -6,6 +6,8 @@ runr provides an opinionated wrapper to run simulations and recover tidy output.
 
 The packages exports one function, `run`, which runs a function with some varying parameters, and some fixed parameters. `run`, expects the varying parameters in a data.frame and the fixed parameters in a list or environment. It returns the results in an data.frame that can be `cbind`-ed to the input data.frame.
 
+[![Travis-CI Build Status](https://travis-ci.org/ashander/runr.svg?branch=master)](https://travis-ci.org/ashander/runr) [![Coverage Status](https://img.shields.io/codecov/c/github/ashander/runr/master.svg)](https://codecov.io/github/ashander/runr?branch=master)
+
 Example usage:
 ==============
 
