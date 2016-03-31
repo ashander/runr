@@ -18,6 +18,7 @@ Example Usage:
 
 ``` r
 require(devtools)
+#> Loading required package: devtools
 devtools::run_examples('.')
 #> Updating runr documentation
 #> Loading runr
@@ -50,12 +51,12 @@ devtools::run_examples('.')
 #> > output <- run(data, growth_runner, initial_data)
 #> > head(cbind(data, output))
 #>            b        K   r    n_final
-#> 1 0.01000000 1.105171 0.5 -0.7811697
-#> 2 0.06444444 1.105171 0.5 -0.4172534
-#> 3 0.11888889 1.105171 0.5 -0.7009926
-#> 4 0.17333333 1.105171 0.5 -0.5910103
-#> 5 0.22777778 1.105171 0.5 -0.7561710
-#> 6 0.28222222 1.105171 0.5 -0.5972032
+#> 1 0.01000000 1.105171 0.5 -0.6483548
+#> 2 0.06444444 1.105171 0.5 -0.7262741
+#> 3 0.11888889 1.105171 0.5 -0.6321369
+#> 4 0.17333333 1.105171 0.5 -0.7607913
+#> 5 0.22777778 1.105171 0.5 -0.6728537
+#> 6 0.28222222 1.105171 0.5 -0.7231543
 #> Loading runr
 ```
 
@@ -65,7 +66,7 @@ Details
 Vignette
 --------
 
-For further examples, [read the vignette](http://www.ashander.info/runr/inst/doc/debug-profile.html). It focuses on on debug and profile output.
+For further examples, [read the vignette](http://www.ashander.info/runr/doc/debug-profile.html). It focuses on on debug and profile output.
 
 Documentation
 -------------

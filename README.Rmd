@@ -41,7 +41,7 @@ devtools::run_examples('.')
 
 ## Vignette
 
-For further examples, [read the vignette](http://www.ashander.info/runr/inst/doc/debug-profile.html).
+For further examples, [read the vignette](http://www.ashander.info/runr/doc/debug-profile.html).
 It focuses on on debug and profile output.
 
 ## Documentation
