@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Runr by ashander</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Runr</h1>
+        <p>a tidy simulation runner</p>
+
+        <p class="view"><a href="https://github.com/ashander/runr">View the Project on GitHub <small>ashander/runr</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/ashander/runr/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ashander/runr/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ashander/runr">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        
+
+<h1>
+<a id="runr-a-tidy-simulation-runner" class="anchor" href="#runr-a-tidy-simulation-runner" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>runr: a tidy simulation runner</h1>
+
+<p>runr provides an opinionated wrapper to run simulations and recover tidy output.</p>
+
+<p>The packages exports one function, <code>run</code>, which runs a function with some varying parameters, and some fixed parameters. <code>run</code>, expects the varying parameters in a data.frame and the fixed parameters in a list or environment. It returns the results in an data.frame that can be <code>cbind</code>-ed to the input data.frame.</p>
+
+<p><a href="https://travis-ci.org/ashander/runr"><img src="https://travis-ci.org/ashander/runr.svg?branch=master" alt="Travis-CI Build Status"></a> <a href="https://codecov.io/github/ashander/runr?branch=master"><img src="https://img.shields.io/codecov/c/github/ashander/runr/master.svg" alt="Coverage Status"></a></p>
+
+<h1>
+<a id="example-usage" class="anchor" href="#example-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example usage:</h1>
+
+<div class="highlight highlight-source-r"><pre>require(<span class="pl-smi">devtools</span>)
+<span class="pl-e">devtools</span><span class="pl-k">::</span>run_examples(<span class="pl-s"><span class="pl-pds">'</span>.<span class="pl-pds">'</span></span>)
+<span class="pl-c">#&gt; Updating runr documentation</span>
+<span class="pl-c">#&gt; Loading runr</span>
+<span class="pl-c">#&gt; Running 2 example files in runr -------------------------------------------</span>
+<span class="pl-c">#&gt; Loading runr</span>
+<span class="pl-c">#&gt; Running examples in run.Rd ------------------------------------------------</span>
+<span class="pl-c">#&gt; &gt; </span>
+<span class="pl-c">#&gt; &gt; growth &lt;- function(n, r, K, b) {</span>
+<span class="pl-c">#&gt; +   # Ricker-like growth curve in n = log N</span>
+<span class="pl-c">#&gt; +   n  + r - exp(n) / K - b</span>
+<span class="pl-c">#&gt; + }</span>
+<span class="pl-c">#&gt; &gt; data &lt;- expand.grid(</span>
+<span class="pl-c">#&gt; +                     b = seq(0.01, 0.5, length.out=10),</span>
+<span class="pl-c">#&gt; +                     K = exp(seq(0.1, 5, length.out=10)),</span>
+<span class="pl-c">#&gt; +                     r = seq(0.5, 3.5, length.out=10)</span>
+<span class="pl-c">#&gt; +                     )</span>
+<span class="pl-c">#&gt; &gt; initial_data = list(N0=0.9, T=5, reps=100)</span>
+<span class="pl-c">#&gt; &gt; </span>
+<span class="pl-c">#&gt; &gt; growth_runner &lt;- function(r, K, b, ic) {</span>
+<span class="pl-c">#&gt; +   n0 = ic$N0  </span>
+<span class="pl-c">#&gt; +   T = ic$T</span>
+<span class="pl-c">#&gt; +   reps = ic$reps</span>
+<span class="pl-c">#&gt; +   out &lt;- lapply(1:reps, function(i) {</span>
+<span class="pl-c">#&gt; +                   for(t in 1:T) {</span>
+<span class="pl-c">#&gt; +                     n0 &lt;- growth(n0, r, K, b)</span>
+<span class="pl-c">#&gt; +                     }</span>
+<span class="pl-c">#&gt; +                   return(n0)</span>
+<span class="pl-c">#&gt; +                     })</span>
+<span class="pl-c">#&gt; +   data.frame(n_final = do.call(rbind, out))</span>
+<span class="pl-c">#&gt; + }</span>
+<span class="pl-c">#&gt; &gt; </span>
+<span class="pl-c">#&gt; &gt; </span>
+<span class="pl-c">#&gt; &gt; output &lt;- run(data, growth_runner, initial_data)</span>
+<span class="pl-c">#&gt; &gt; head(cbind(data, output))</span>
+<span class="pl-c">#&gt;            b        K   r    n_final</span>
+<span class="pl-c">#&gt; 1 0.01000000 1.105171 0.5 -0.6316763</span>
+<span class="pl-c">#&gt; 2 0.06444444 1.105171 0.5 -0.6316763</span>
+<span class="pl-c">#&gt; 3 0.11888889 1.105171 0.5 -0.6316763</span>
+<span class="pl-c">#&gt; 4 0.17333333 1.105171 0.5 -0.6316763</span>
+<span class="pl-c">#&gt; 5 0.22777778 1.105171 0.5 -0.6316763</span>
+<span class="pl-c">#&gt; 6 0.28222222 1.105171 0.5 -0.6316763</span>
+<span class="pl-c">#&gt; Loading runr</span></pre></div>
+
+<h1>
+<a id="details" class="anchor" href="#details" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Details</h1>
+
+<p>Better to install the package and do <code>require(runr); ?run</code>, but here's an ugly preview of the help file:</p>
+
+<div class="highlight highlight-source-r"><pre>cat(readLines(<span class="pl-s"><span class="pl-pds">'</span>man/run.Rd<span class="pl-pds">'</span></span>), <span class="pl-v">sep</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-cce">\n</span><span class="pl-pds">'</span></span>)
+<span class="pl-c">#&gt; % Generated by roxygen2: do not edit by hand</span>
+<span class="pl-c">#&gt; % Please edit documentation in R/run.r</span>
+<span class="pl-c">#&gt; \name{run}</span>
+<span class="pl-c">#&gt; \alias{run}</span>
+<span class="pl-c">#&gt; \title{Run a simulation function}</span>
+<span class="pl-c">#&gt; \usage{</span>
+<span class="pl-c">#&gt; run(data, fun, fixed_parameters, ...)</span>
+<span class="pl-c">#&gt; }</span>
+<span class="pl-c">#&gt; \arguments{</span>
+<span class="pl-c">#&gt; \item{data}{a data.frame (or tibble, in future)}</span>
+<span class="pl-c">#&gt; </span>
+<span class="pl-c">#&gt; \item{fun}{a function}</span>
+<span class="pl-c">#&gt; </span>
+<span class="pl-c">#&gt; \item{fixed_parameters}{an environment or list}</span>
+<span class="pl-c">#&gt; </span>
+<span class="pl-c">#&gt; \item{...}{additional parameters passed to `fun`}</span>
+<span class="pl-c">#&gt; }</span>
+<span class="pl-c">#&gt; \value{</span>
+<span class="pl-c">#&gt; a data.frame including the columns of data and the return from `fun`</span>
+<span class="pl-c">#&gt; }</span>
+<span class="pl-c">#&gt; \description{</span>
+<span class="pl-c">#&gt; Run a simulation function</span>
+<span class="pl-c">#&gt; }</span>
+<span class="pl-c">#&gt; \details{</span>
+<span class="pl-c">#&gt; `fun` must have signature (a1, a2, &lt;...&gt;, aN, fixed_params, ...) where</span>
+<span class="pl-c">#&gt;          1) N is the number of columns in data (the names of these arguments</span>
+<span class="pl-c">#&gt;          don't matter). Note &lt;...&gt; elides intervening arguments and is NOT</span>
+<span class="pl-c">#&gt;          R's ... parameter! 2) the ... parameter is optional 3) The function</span>
+<span class="pl-c">#&gt;          must return a data.frame.</span>
+<span class="pl-c">#&gt; }</span>
+<span class="pl-c">#&gt; \examples{</span>
+<span class="pl-c">#&gt; growth &lt;- function(n, r, K, b) {</span>
+<span class="pl-c">#&gt;   # Ricker-like growth curve in n = log N</span>
+<span class="pl-c">#&gt;   n  + r - exp(n) / K - b</span>
+<span class="pl-c">#&gt; }</span>
+<span class="pl-c">#&gt; data &lt;- expand.grid(</span>
+<span class="pl-c">#&gt;                     b = seq(0.01, 0.5, length.out=10),</span>
+<span class="pl-c">#&gt;                     K = exp(seq(0.1, 5, length.out=10)),</span>
+<span class="pl-c">#&gt;                     r = seq(0.5, 3.5, length.out=10)</span>
+<span class="pl-c">#&gt;                     )</span>
+<span class="pl-c">#&gt; initial_data = list(N0=0.9, T=5, reps=100)</span>
+<span class="pl-c">#&gt; </span>
+<span class="pl-c">#&gt; growth_runner &lt;- function(r, K, b, ic) {</span>
+<span class="pl-c">#&gt;   n0 = ic$N0  </span>
+<span class="pl-c">#&gt;   T = ic$T</span>
+<span class="pl-c">#&gt;   reps = ic$reps</span>
+<span class="pl-c">#&gt;   out &lt;- lapply(1:reps, function(i) {</span>
+<span class="pl-c">#&gt;                   for(t in 1:T) {</span>
+<span class="pl-c">#&gt;                     n0 &lt;- growth(n0, r, K, b)</span>
+<span class="pl-c">#&gt;                     }</span>
+<span class="pl-c">#&gt;                   return(n0)</span>
+<span class="pl-c">#&gt;                     })</span>
+<span class="pl-c">#&gt;   data.frame(n_final = do.call(rbind, out))</span>
+<span class="pl-c">#&gt; }</span>
+<span class="pl-c">#&gt; </span>
+<span class="pl-c">#&gt; </span>
+<span class="pl-c">#&gt; output &lt;- run(data, growth_runner, initial_data)</span>
+<span class="pl-c">#&gt; head(cbind(data, output))</span>
+<span class="pl-c">#&gt; }</span></pre></div>
+
+<h1>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install</h1>
+
+<p><code>devtools::install_github('ashander/runr')</code></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/ashander">ashander</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
