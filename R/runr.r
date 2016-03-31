@@ -10,5 +10,7 @@
 #'
 #' @docType package
 #' @name runr
+#' @author Jaime Ashander
 #' @import assertthat
+#' @aliases runr-package
 NULL

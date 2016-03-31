@@ -15,4 +15,7 @@ parameters in a data.frame and the fixed parameters in a list or environment.
 It returns the results in an data.frame that can be `cbind`-ed to the input
 data.frame.
 }
+\author{
+Jaime Ashander
+}
 
