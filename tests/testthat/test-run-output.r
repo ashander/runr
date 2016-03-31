@@ -1,6 +1,13 @@
 library(runr)
-context("Output validation where no manipulation occurs")
+context("Output validation")
+context("-- without manipulation")
 
+test_that("output non-df fails", {
+            expect_error(run(data.frame(a=1, b=2),
+                              function(a, b , env, ...) {c(a=a, b=b)},
+                              environment()),
+                         "not data frames", fixed = FALSE)
+})
 test_that("output identical to input", {
             expect_identical(run(data.frame(a=1, b=2),
                               function(a, b , env, ...) {data.frame(a=a, b=b)},
@@ -8,7 +15,7 @@ test_that("output identical to input", {
                          data.frame(a=1, b=2))
 })
 
-context("Output validation with simple manipulation")
+context("-- with simple manipulation")
 test_that("random, two-column data.frames with no extra data", {
             reps <- ceiling(runif(min=0, max=1, n=10) * 100)
             for(r in reps) {
@@ -76,7 +83,7 @@ test_that("random, two-column data.frames with extra data", {
             }
 })
 
-context("Output validation when manipulation depends on extra data")
+context("-- when manipulation depends on extra data")
 test_that("random, two-column data.frames with functions depending on extra data", {
             reps <- ceiling(runif(min=0, max=1, n=10) * 100)
             for(r in reps) {
@@ -120,4 +127,33 @@ test_that("random, two-column data.frames with functions depending on extra data
             dat_ref <- do.call(rbind, dat_ref)
             row.names(dat_ref) <- NULL
             expect_identical(out, dat_ref)
+})
+context("-- ordering of rows")
+test_that("example output ordering", {
+            REP <- 1
+            growth <- function(n, r, K, b) {
+            }
+            data <- expand.grid(
+                                b = seq(0.01, 0.5, length.out=10),
+                                K = exp(seq(0.1, 5, length.out=10)),
+                                r = seq(0.5, 3.5, length.out=10)
+                                )
+            initial_data = list(N0=0.9, T=1, reps=REP)
+            growth_runner <- function(r, K, b, ic) {
+              n0 = ic$N0
+              T = ic$T
+              reps = ic$reps
+              out <- lapply(1:reps, function(i) {
+                              return(1)
+                                })
+              data.frame(b = b, 
+                         K = K, 
+                         r = r, 
+                         n_final = do.call(rbind, out))
+            }
+            output <- run(data, growth_runner, initial_data)
+
+            expect_identical(output['r'], data['r'])
+            expect_identical(output['K'], data['K'])
+            expect_identical(output['b'], data['b'])
 })
