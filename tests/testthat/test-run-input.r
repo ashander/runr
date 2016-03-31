@@ -1,4 +1,3 @@
-library(runr)
 context("Input validation")
 
 test_that("incorrect inputs fail", {

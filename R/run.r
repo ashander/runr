@@ -1,15 +1,15 @@
 #' Run a simulation function
-#' 
-#' @param data a data.frame (or tibble, in future) 
-#' @param fun a function 
-#' @param fixed_parameters an environment or list 
+#'
+#' @param data a data.frame (or tibble, in future)
+#' @param fun a function
+#' @param fixed_parameters an environment or list
 #' @param ... additional parameters passed to `fun`
 #' @details `fun` must have signature (a1, a2, <...>, aN, fixed_params, ...) where
 #'          1) N is the number of columns in data (the names of these arguments
 #'          don't matter). Note <...> elides intervening arguments and is NOT
 #'          R's ... parameter! 2) the ... parameter is optional 3) The function
 #'          must return a data.frame.
-#' @return a data.frame including the columns of data and the return from `fun` 
+#' @return a data.frame including the columns of data and the return from `fun`
 #' @importFrom dplyr do_ %>% rowwise
 #' @importFrom lazyeval interp
 #' @examples
@@ -23,9 +23,9 @@
 #'                     r = seq(0.5, 3.5, length.out=10)
 #'                     )
 #' initial_data = list(N0=0.9, T=5, reps=100)
-#' 
+#'
 #' growth_runner <- function(r, K, b, ic) {
-#'   n0 = ic$N0  
+#'   n0 = ic$N0
 #'   T = ic$T
 #'   reps = ic$reps
 #'   out <- lapply(1:reps, function(i) {
@@ -36,16 +36,16 @@
 #'                     })
 #'   data.frame(n_final = do.call(rbind, out))
 #' }
-#' 
-#' 
+#'
+#'
 #' output <- run(data, growth_runner, initial_data)
 #' head(cbind(data, output))
 #' @export
 
 run <- function(data, fun, fixed_parameters, ...) {
-  assert_that(is.environment(fixed_parameters) || is.list(fixed_parameters), 
+  assert_that(is.environment(fixed_parameters) || is.list(fixed_parameters),
               is.function(fun),
-              is.data.frame(data), 
+              is.data.frame(data),
               ncol(data) > 0)
   fun_args <- formals(fun)
   assert_that(length(fun_args) >= ncol(data) + 1 &&

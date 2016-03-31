@@ -41,7 +41,7 @@ data <- expand.grid(
 initial_data = list(N0=0.9, T=5, reps=100)
 
 growth_runner <- function(r, K, b, ic) {
-  n0 = ic$N0  
+  n0 = ic$N0
   T = ic$T
   reps = ic$reps
   out <- lapply(1:reps, function(i) {
