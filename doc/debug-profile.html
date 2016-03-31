@@ -117,9 +117,46 @@ growth_runner &lt;-<span class="st"> </span>function(r, K, b, ic, ...) {
                                         n0})
   )
 }</code></pre></div>
+<div id="profiling-output" class="section level2">
+<h2>Profiling output</h2>
+<p>Now, we can examine profile output.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp &lt;-<span class="st"> </span><span class="kw">tempfile</span>()
+<span class="kw">Rprof</span>(tmp, <span class="dt">interval =</span> <span class="fl">0.01</span>, <span class="dt">line.profiling =</span> <span class="ot">TRUE</span>)
+output &lt;-<span class="st"> </span><span class="kw">run</span>(data, growth_runner, initial_data)
+<span class="kw">Rprof</span>(<span class="ot">NULL</span>)
+<span class="kw">summaryRprof</span>(tmp)$by.self</code></pre></div>
+<pre><code>##                  self.time self.pct total.time total.pct
+## &quot;rnorm&quot;               1.32    47.48       1.32     47.48
+## &quot;growth&quot;              0.57    20.50       1.96     70.50
+## &quot;FUN&quot;                 0.28    10.07       2.27     81.65
+## &quot;lapply&quot;              0.18     6.47       2.45     88.13
+## &quot;unlist&quot;              0.10     3.60       0.11      3.96
+## &quot;sapply&quot;              0.03     1.08       2.58     92.81
+## &quot;exp&quot;                 0.03     1.08       0.03      1.08
+## &quot;do_.rowwise_df&quot;      0.02     0.72       2.78    100.00
+## &quot;deparse&quot;             0.02     0.72       0.04      1.44
+## &quot;:&quot;                   0.02     0.72       0.02      0.72
+## &quot;.Call&quot;               0.02     0.72       0.02      0.72
+## &quot;.deparseOpts&quot;        0.02     0.72       0.02      0.72
+## &quot;/&quot;                   0.02     0.72       0.02      0.72
+## &quot;$&quot;                   0.02     0.72       0.02      0.72
+## &quot;&lt;Anonymous&gt;&quot;         0.01     0.36       2.78    100.00
+## &quot;eval&quot;                0.01     0.36       2.78    100.00
+## &quot;data.frame&quot;          0.01     0.36       2.67     96.04
+## &quot;paste&quot;               0.01     0.36       0.05      1.80
+## &quot;unique&quot;              0.01     0.36       0.02      0.72
+## &quot;-&quot;                   0.01     0.36       0.01      0.36
+## &quot;+&quot;                   0.01     0.36       0.01      0.36
+## &quot;as.list&quot;             0.01     0.36       0.01      0.36
+## &quot;c&quot;                   0.01     0.36       0.01      0.36
+## &quot;dim.data.frame&quot;      0.01     0.36       0.01      0.36
+## &quot;get&quot;                 0.01     0.36       0.01      0.36
+## &quot;is.factor&quot;           0.01     0.36       0.01      0.36
+## &quot;parent.frame&quot;        0.01     0.36       0.01      0.36</code></pre>
+</div>
 <div id="traceback-output" class="section level2">
 <h2>Traceback output</h2>
-<p>We replace <code>growth_runner</code>, with a function that intentionally raises an error.</p>
+<p>To get a look at the call stack, we replace <code>growth_runner</code>, with a function that intentionally raises an error.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">error_runner &lt;-<span class="st"> </span>function(r, K, b, ic, ...) {
     <span class="kw">stop</span>(<span class="st">&quot;thrown an error&quot;</span>)
 }</code></pre></div>
@@ -146,38 +183,6 @@ growth_runner &lt;-<span class="st"> </span>function(r, K, b, ic, ...) {
 ## 2: data %&gt;% rowwise %&gt;% do_(interp(~do.call(fun, c(., fixed_parameters,
 ##                                ...)))) %&gt;% as.data.frame() at run.r#55
 ## 1: run(data, error_runner, initial_data, error = TRUE)</code></pre></div>
-</div>
-<div id="profiling-output" class="section level2">
-<h2>Profiling output</h2>
-<p>We can also examine profile output (without throwing an error).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tmp &lt;-<span class="st"> </span><span class="kw">tempfile</span>()
-<span class="kw">Rprof</span>(tmp, <span class="dt">interval =</span> <span class="fl">0.01</span>, <span class="dt">line.profiling =</span> <span class="ot">TRUE</span>)
-output &lt;-<span class="st"> </span><span class="kw">run</span>(data, growth_runner, initial_data)
-<span class="kw">Rprof</span>(<span class="ot">NULL</span>)
-<span class="kw">summaryRprof</span>(tmp)$by.self</code></pre></div>
-<pre><code>##                self.time self.pct total.time total.pct
-## &quot;rnorm&quot;             1.29    52.87       1.29     52.87
-## &quot;growth&quot;            0.35    14.34       1.70     69.67
-## &quot;FUN&quot;               0.22     9.02       1.93     79.10
-## &quot;lapply&quot;            0.19     7.79       2.14     87.70
-## &quot;unlist&quot;            0.16     6.56       0.16      6.56
-## &quot;.Call&quot;             0.03     1.23       0.03      1.23
-## &quot;data.frame&quot;        0.02     0.82       2.37     97.13
-## &quot;+&quot;                 0.02     0.82       0.02      0.82
-## &quot;as.list&quot;           0.02     0.82       0.02      0.82
-## &quot;exp&quot;               0.02     0.82       0.02      0.82
-## &quot;eval&quot;              0.01     0.41       2.44    100.00
-## &quot;do.call&quot;           0.01     0.41       2.40     98.36
-## &quot;.deparseOpts&quot;      0.01     0.41       0.04      1.64
-## &quot;-&quot;                 0.01     0.41       0.01      0.41
-## &quot;:&quot;                 0.01     0.41       0.01      0.41
-## &quot;/&quot;                 0.01     0.41       0.01      0.41
-## &quot;any&quot;               0.01     0.41       0.01      0.41
-## &quot;length&quot;            0.01     0.41       0.01      0.41
-## &quot;lengths&quot;           0.01     0.41       0.01      0.41
-## &quot;make.names&quot;        0.01     0.41       0.01      0.41
-## &quot;pmatch&quot;            0.01     0.41       0.01      0.41
-## &quot;sum&quot;               0.01     0.41       0.01      0.41</code></pre>
 </div>
 </div>
 
