@@ -28,14 +28,24 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Install
+`devtools::install_github('ashander/runr')`
 
-# Example usage:
+# Example Usage:
 ```{r, run-ex}
 require(devtools)
 devtools::run_examples('.')
 ```
 
 # Details
+
+## Vignette
+
+For further examples, [read the vignette](http://www.ashander.info/runr/inst/doc/debug-profile.html).
+It focuses on on debug and profile output.
+
+## Documentation
+
 Better to install the package and do `require(runr); ?run`, but here's an ugly
 preview of the help file:
 
@@ -43,5 +53,3 @@ preview of the help file:
 cat(readLines('man/run.Rd'), sep = '\n')
 ```
 
-# Install
-`devtools::install_github('ashander/runr')`

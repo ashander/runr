@@ -8,7 +8,12 @@ The packages exports one function, `run`, which runs a function with some varyin
 
 [![Travis-CI Build Status](https://travis-ci.org/ashander/runr.svg?branch=master)](https://travis-ci.org/ashander/runr) [![Coverage Status](https://img.shields.io/codecov/c/github/ashander/runr/master.svg)](https://codecov.io/github/ashander/runr?branch=master)
 
-Example usage:
+Install
+=======
+
+`devtools::install_github('ashander/runr')`
+
+Example Usage:
 ==============
 
 ``` r
@@ -22,43 +27,48 @@ devtools::run_examples('.')
 #> > 
 #> > growth <- function(n, r, K, b) {
 #> +   # Ricker-like growth curve in n = log N
-#> +   n  + r - exp(n) / K - b
+#> +   # this is an obviously-inefficient way to do this ;)
+#> +   n  + r - exp(n) / K - b - rnorm(1, 0, 0.1)
 #> + }
 #> > data <- expand.grid(
 #> +                     b = seq(0.01, 0.5, length.out=10),
 #> +                     K = exp(seq(0.1, 5, length.out=10)),
 #> +                     r = seq(0.5, 3.5, length.out=10)
 #> +                     )
-#> > initial_data = list(N0=0.9, T=5, reps=100)
+#> > initial_data = list(N0=0.9, T=5, reps=10)
 #> > 
-#> > growth_runner <- function(r, K, b, ic) {
-#> +   n0 = ic$N0  
+#> > growth_runner <- function(r, K, b, ic, ...) {
+#> +   n0 = ic$N0
 #> +   T = ic$T
 #> +   reps = ic$reps
-#> +   out <- lapply(1:reps, function(i) {
-#> +                   for(t in 1:T) {
+#> +   data.frame(n_final = replicate(reps, {for(t in 1:T) {
 #> +                     n0 <- growth(n0, r, K, b)
-#> +                     }
-#> +                   return(n0)
-#> +                     })
-#> +   data.frame(n_final = do.call(rbind, out))
+#> +                     };
+#> +                   n0}))
 #> + }
-#> > 
 #> > 
 #> > output <- run(data, growth_runner, initial_data)
 #> > head(cbind(data, output))
 #>            b        K   r    n_final
-#> 1 0.01000000 1.105171 0.5 -0.6316763
-#> 2 0.06444444 1.105171 0.5 -0.6316763
-#> 3 0.11888889 1.105171 0.5 -0.6316763
-#> 4 0.17333333 1.105171 0.5 -0.6316763
-#> 5 0.22777778 1.105171 0.5 -0.6316763
-#> 6 0.28222222 1.105171 0.5 -0.6316763
+#> 1 0.01000000 1.105171 0.5 -0.7811697
+#> 2 0.06444444 1.105171 0.5 -0.4172534
+#> 3 0.11888889 1.105171 0.5 -0.7009926
+#> 4 0.17333333 1.105171 0.5 -0.5910103
+#> 5 0.22777778 1.105171 0.5 -0.7561710
+#> 6 0.28222222 1.105171 0.5 -0.5972032
 #> Loading runr
 ```
 
 Details
 =======
+
+Vignette
+--------
+
+For further examples, [read the vignette](http://www.ashander.info/runr/inst/doc/debug-profile.html). It focuses on on debug and profile output.
+
+Documentation
+-------------
 
 Better to install the package and do `require(runr); ?run`, but here's an ugly preview of the help file:
 
@@ -97,35 +107,27 @@ cat(readLines('man/run.Rd'), sep = '\n')
 #> \examples{
 #> growth <- function(n, r, K, b) {
 #>   # Ricker-like growth curve in n = log N
-#>   n  + r - exp(n) / K - b
+#>   # this is an obviously-inefficient way to do this ;)
+#>   n  + r - exp(n) / K - b - rnorm(1, 0, 0.1)
 #> }
 #> data <- expand.grid(
 #>                     b = seq(0.01, 0.5, length.out=10),
 #>                     K = exp(seq(0.1, 5, length.out=10)),
 #>                     r = seq(0.5, 3.5, length.out=10)
 #>                     )
-#> initial_data = list(N0=0.9, T=5, reps=100)
+#> initial_data = list(N0=0.9, T=5, reps=10)
 #> 
-#> growth_runner <- function(r, K, b, ic) {
-#>   n0 = ic$N0  
+#> growth_runner <- function(r, K, b, ic, ...) {
+#>   n0 = ic$N0
 #>   T = ic$T
 #>   reps = ic$reps
-#>   out <- lapply(1:reps, function(i) {
-#>                   for(t in 1:T) {
+#>   data.frame(n_final = replicate(reps, {for(t in 1:T) {
 #>                     n0 <- growth(n0, r, K, b)
-#>                     }
-#>                   return(n0)
-#>                     })
-#>   data.frame(n_final = do.call(rbind, out))
+#>                     };
+#>                   n0}))
 #> }
-#> 
 #> 
 #> output <- run(data, growth_runner, initial_data)
 #> head(cbind(data, output))
 #> }
 ```
-
-Install
-=======
-
-`devtools::install_github('ashander/runr')`
