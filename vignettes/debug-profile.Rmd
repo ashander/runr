@@ -1,0 +1,120 @@
+---
+title: "Debugging and Profiling"
+author: "Jaime Ashander"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This package only provides a single function `run`
+
+```{r, load}
+library(runr)
+## to see all the code in `run`, uncomment and evaluate
+## run
+```
+
+Here's the core of run:
+```r
+require(dplyr)
+require(lazyeval)
+run <- function(data, fun, fixed_parameters, ...) {
+  ## ....
+  ## argument checking
+  ##
+
+  fixed_parameters <- as.environment(fixed_parameters)
+  data %>%
+    rowwise %>%
+    do_(interp( ~ do.call(fun, c(., fixed_parameters, ...)))) %>%
+    as.data.frame()
+}
+```
+
+
+# Worked example
+
+We start with the example (viewable in the R console with `?run`)
+
+```{r, example}
+growth <- function(n, r, K, b) {
+  # Ricker-like growth curve in n = log N
+  # this is an obviously-inefficient way to do this ;)
+  n  + r - exp(n) / K - b - rnorm(1, 0, 0.1)
+}
+data <- expand.grid(
+                    b = seq(0.01, 0.5, length.out=10),
+                    K = exp(seq(0.1, 5, length.out=10)),
+                    r = seq(0.5, 3.5, length.out=10)
+                    )
+initial_data = list(N0=0.9, T=5, reps=100)
+growth_runner <- function(r, K, b, ic, ...) {
+  n0 = ic$N0
+  T = ic$T
+  reps = ic$reps
+  data.frame(n_final = replicate(reps, {for(t in 1:T) {
+                                          n0 <- growth(n0, r, K, b)
+                                        };
+                                        n0})
+  )
+}
+```
+
+
+
+## Profiling output
+
+Now, we can examine profile output.
+
+```{r, profile-example}
+tmp <- tempfile()
+Rprof(tmp, interval = 0.01, line.profiling = TRUE)
+output <- run(data, growth_runner, initial_data)
+Rprof(NULL)
+summaryRprof(tmp)$by.self
+```
+
+## Traceback output
+
+To get a look at the call stack, we  replace `growth_runner`, with a function
+that intentionally raises an error.
+
+```{r, example-change}
+error_runner <- function(r, K, b, ic, ...) {
+    stop("thrown an error")
+}
+```
+
+This way, we can see an example traceback. Note, the code below isn't run in
+building the vignette (because it throws and error), but sample output is in
+the code block below.
+
+```{r, debug-example, eval=FALSE}
+run(data, error_runner, initial_data, error = TRUE)
+traceback()
+## 15: stop("thrown an error") at #2
+## 14: (function (r, K, b, ic, ...)
+##          {
+## 		         stop("thrown an error")
+## 	     })(b = 0.01, K = 1.10517091807565, r = 0.5, <environment>, error = TRUE)
+## 13: do.call(fun, c(., fixed_parameters, ...))
+## 12: eval(expr, envir, enclos)
+## 11: eval(args[[j]]$expr, envir = env)
+## 10: do_.rowwise_df(., interp(~do.call(fun, c(., fixed_parameters,
+## 					             ...))))
+## 9: do_(., interp(~do.call(fun, c(., fixed_parameters, ...))))
+## 8: function_list[[i]](value)
+## 7: freduce(value, `_function_list`)
+## 6: `_fseq`(`_lhs`)
+## 5: eval(expr, envir, enclos)
+## 4: eval(quote(`_fseq`(`_lhs`)), env, env)
+## 3: withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+## 2: data %>% rowwise %>% do_(interp(~do.call(fun, c(., fixed_parameters,
+## 						          ...)))) %>% as.data.frame() at run.r#55
+## 1: run(data, error_runner, initial_data, error = TRUE)
+```

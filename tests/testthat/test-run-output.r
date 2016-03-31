@@ -39,11 +39,11 @@ test_that("random, two-column data.frames with extra NA data", {
               extra <- list(c=rep(extra_val, r))
               expect_identical(run(data.frame(a=aval, b=bval),
                                    function(a, b, env, ...) {data.frame(a=rep(a, r),
-                                                                         b=rep(b, r), 
+                                                                         b=rep(b, r),
                                                                          c=env$c)},
                                    extra),
                                data.frame(a=rep(aval, r),
-                                          b=rep(bval, r), 
+                                          b=rep(bval, r),
                                           c=rep(extra_val, r)))
             }
 })
@@ -56,11 +56,11 @@ test_that("random, two-column data.frames with slightly weird data", {
               extra <- list(c=rep(extra_val, r))
               expect_identical(run(data.frame(a=aval, b=bval),
                                    function(a, b, env, ...) {data.frame(a=rep(a, r),
-                                                                         b=rep(b, r), 
+                                                                         b=rep(b, r),
                                                                          c=env$c)},
                                    extra),
                                data.frame(a=rep(aval, r),
-                                          b=rep(bval, r), 
+                                          b=rep(bval, r),
                                           c=rep(extra_val, r)))
             }
 })
@@ -74,11 +74,11 @@ test_that("random, two-column data.frames with extra data", {
               extra <- list(c=rep(extra_val, r))
               expect_identical(run(data.frame(a=aval, b=bval),
                                    function(a, b, env, ...) {data.frame(a=rep(a, r),
-                                                                         b=rep(b, r), 
+                                                                         b=rep(b, r),
                                                                          c=env$c)},
                                    extra),
                                data.frame(a=rep(aval, r),
-                                          b=rep(bval, r), 
+                                          b=rep(bval, r),
                                           c=rep(extra_val, r)))
             }
 })
@@ -118,9 +118,9 @@ test_that("random, two-column data.frames with functions depending on extra data
 
             ## make reference
             dat['obs'] <- 1:nrow(dat)
-            dat_ref <- lapply(split(dat, dat['obs']), 
+            dat_ref <- lapply(split(dat, dat['obs']),
                               function(chunk) {
-                                data.frame(new=chunk$a, 
+                                data.frame(new=chunk$a,
                                            old=chunk$b,
                                            res=extra$c)
                               })
@@ -143,13 +143,10 @@ test_that("example output ordering", {
               n0 = ic$N0
               T = ic$T
               reps = ic$reps
-              out <- lapply(1:reps, function(i) {
-                              return(1)
-                                })
-              data.frame(b = b, 
-                         K = K, 
-                         r = r, 
-                         n_final = do.call(rbind, out))
+              data.frame(b = b,
+                         K = K,
+                         r = r,
+                         n_final = replicate(reps, {1}))
             }
             output <- run(data, growth_runner, initial_data)
 

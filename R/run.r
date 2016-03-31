@@ -15,28 +15,25 @@
 #' @examples
 #' growth <- function(n, r, K, b) {
 #'   # Ricker-like growth curve in n = log N
-#'   n  + r - exp(n) / K - b
+#'   # this is an obviously-inefficient way to do this ;)
+#'   n  + r - exp(n) / K - b - rnorm(1, 0, 0.1)
 #' }
 #' data <- expand.grid(
 #'                     b = seq(0.01, 0.5, length.out=10),
 #'                     K = exp(seq(0.1, 5, length.out=10)),
 #'                     r = seq(0.5, 3.5, length.out=10)
 #'                     )
-#' initial_data = list(N0=0.9, T=5, reps=100)
+#' initial_data = list(N0=0.9, T=5, reps=10)
 #'
-#' growth_runner <- function(r, K, b, ic) {
+#' growth_runner <- function(r, K, b, ic, ...) {
 #'   n0 = ic$N0
 #'   T = ic$T
 #'   reps = ic$reps
-#'   out <- lapply(1:reps, function(i) {
-#'                   for(t in 1:T) {
+#'   data.frame(n_final = replicate(reps, {for(t in 1:T) {
 #'                     n0 <- growth(n0, r, K, b)
-#'                     }
-#'                   return(n0)
-#'                     })
-#'   data.frame(n_final = do.call(rbind, out))
+#'                     };
+#'                   n0}))
 #' }
-#'
 #'
 #' output <- run(data, growth_runner, initial_data)
 #' head(cbind(data, output))

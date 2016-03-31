@@ -3,3 +3,4 @@
 .RData
 scratch.txt
 .*.*.swp
+inst/doc
