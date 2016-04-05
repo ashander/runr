@@ -29,10 +29,8 @@ run <- function(data, fun, fixed_parameters, ...) {
   ##
 
   fixed_parameters <- as.environment(fixed_parameters)
-  data %>%
-    rowwise %>%
-    do_(interp( ~ do.call(fun, c(., fixed_parameters, ...)))) %>%
-    as.data.frame()
+  grouped_out <- do_(rowwise(data), ~ do.call(fun, c(., fixed_parameters, ...)))
+  ungroup(grouped_out)
 }
 ```
 

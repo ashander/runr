@@ -8,11 +8,11 @@ test_that("output non-df fails", {
                               environment()),
                          "not data frames", fixed = FALSE)
 })
-test_that("output identical to input", {
-            expect_identical(run(data.frame(a=1, b=2),
-                              function(a, b , env, ...) {data.frame(a=a, b=b)},
-                              environment()),
-                         data.frame(a=1, b=2))
+test_that("output equivalent to input", {
+            expect_equivalent(run(data.frame(a=1, b=2),
+                                  function(a, b , env, ...) {data.frame(a=a, b=b)},
+                                  environment()),
+                              data.frame(a=1, b=2))
 })
 
 context("-- with simple manipulation")
@@ -21,7 +21,7 @@ test_that("random, two-column data.frames with no extra data", {
             for(r in reps) {
               aval <- rnorm(1, 0, 65)
               bval <- rgamma(1, 3, 9)
-              expect_identical(run(data.frame(a=aval, b=bval),
+              expect_equivalent(run(data.frame(a=aval, b=bval),
                                    function(a, b , env, ...) {data.frame(a=rep(a, r),
                                                                          b=rep(b, r))},
                                    environment()),
@@ -37,7 +37,7 @@ test_that("random, two-column data.frames with extra NA data", {
               bval <- rgamma(1, 3, 9)
               extra_val <- NA
               extra <- list(c=rep(extra_val, r))
-              expect_identical(run(data.frame(a=aval, b=bval),
+              expect_equivalent(run(data.frame(a=aval, b=bval),
                                    function(a, b, env, ...) {data.frame(a=rep(a, r),
                                                                          b=rep(b, r),
                                                                          c=env$c)},
@@ -54,7 +54,7 @@ test_that("random, two-column data.frames with slightly weird data", {
               bval <- rgamma(1, 3, 9)
               extra_val <- sample(size=3, list(NA, NaN, list(a=5)))
               extra <- list(c=rep(extra_val, r))
-              expect_identical(run(data.frame(a=aval, b=bval),
+              expect_equivalent(run(data.frame(a=aval, b=bval),
                                    function(a, b, env, ...) {data.frame(a=rep(a, r),
                                                                          b=rep(b, r),
                                                                          c=env$c)},
@@ -72,7 +72,7 @@ test_that("random, two-column data.frames with extra data", {
               bval <- rgamma(1, 3, 9)
               extra_val <- sample(size=3, list(NA, NaN, list(a=5)))
               extra <- list(c=rep(extra_val, r))
-              expect_identical(run(data.frame(a=aval, b=bval),
+              expect_equivalent(run(data.frame(a=aval, b=bval),
                                    function(a, b, env, ...) {data.frame(a=rep(a, r),
                                                                          b=rep(b, r),
                                                                          c=env$c)},
@@ -91,14 +91,14 @@ test_that("random, two-column data.frames with functions depending on extra data
               bval <- rgamma(1, 3, 9)
               extra_val <- sample(size=1, c(NA, NaN, 100000))
               extra <- list(c=extra_val)
-              expect_identical(run(data.frame(a=aval, b=bval),
+              expect_equivalent(run(data.frame(a=aval, b=bval),
                                    function(a, b , env, ...) {data.frame(new=rep(a, r),
                                                                          old=rep(b, r))},
                                    environment()),
                                data.frame(new=rep(aval, r),
                                           old=rep(bval, r)))
             }
-            expect_identical(run(data.frame(a=aval, b=bval),
+            expect_equivalent(run(data.frame(a=aval, b=bval),
                                  function(a, b , env, ...) {data.frame(new=max(a, env$c),
                                                                        old=min(b, env$c))},
                                  extra),
@@ -126,7 +126,7 @@ test_that("random, two-column data.frames with functions depending on extra data
                               })
             dat_ref <- do.call(rbind, dat_ref)
             row.names(dat_ref) <- NULL
-            expect_identical(out, dat_ref)
+            expect_equivalent(out, dat_ref)
 })
 context("-- ordering of rows")
 test_that("example output ordering", {
@@ -150,7 +150,7 @@ test_that("example output ordering", {
             }
             output <- run(data, growth_runner, initial_data)
 
-            expect_identical(output['r'], data['r'])
-            expect_identical(output['K'], data['K'])
-            expect_identical(output['b'], data['b'])
+            expect_equivalent(output['r'], data['r'])
+            expect_equivalent(output['K'], data['K'])
+            expect_equivalent(output['b'], data['b'])
 })

@@ -5,13 +5,17 @@
 #' @param fixed_parameters an environment or list
 #' @param ... additional parameters passed to `fun`
 #' @details `fun` must have signature (a1, a2, <...>, aN, fixed_params, ...) where
+#'
 #'          1) N is the number of columns in data (the names of these arguments
 #'          don't matter). Note <...> elides intervening arguments and is NOT
-#'          R's ... parameter! 2) the ... parameter is optional 3) The function
-#'          must return a data.frame.
-#' @return a data.frame including the columns of data and the return from `fun`
-#' @importFrom dplyr do_ %>% rowwise
-#' @importFrom lazyeval interp
+#'          R's ... parameter!
+#'
+#'          2) the ... parameter is optional
+#'
+#'          3) The function must return a data.frame.
+#' @return a data.frame equivalent (tbl_df) including the columns of data and
+#' the return from `fun`
+#' @importFrom dplyr do_ rowwise
 #' @examples
 #' growth <- function(n, r, K, b) {
 #'   # Ricker-like growth curve in n = log N
@@ -53,9 +57,7 @@ run <- function(data, fun, fixed_parameters, ...) {
       assert_that(length(fun_args) == ncol(data) + 2)
 
   fixed_parameters <- as.environment(fixed_parameters)
-  data %>%
-    rowwise %>%
-    do_(interp( ~ do.call(fun, c(., fixed_parameters, ...)))) %>%
-    as.data.frame()
+  grouped_out <- do_(rowwise(data), ~ do.call(fun, c(., fixed_parameters, ...)))
+  ungroup(grouped_out)
 }
 

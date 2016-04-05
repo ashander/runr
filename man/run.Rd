@@ -16,17 +16,22 @@ run(data, fun, fixed_parameters, ...)
 \item{...}{additional parameters passed to `fun`}
 }
 \value{
-a data.frame including the columns of data and the return from `fun`
+a data.frame equivalent (tbl_df) including the columns of data and
+the return from `fun`
 }
 \description{
 Run a simulation function
 }
 \details{
 `fun` must have signature (a1, a2, <...>, aN, fixed_params, ...) where
+
          1) N is the number of columns in data (the names of these arguments
          don't matter). Note <...> elides intervening arguments and is NOT
-         R's ... parameter! 2) the ... parameter is optional 3) The function
-         must return a data.frame.
+         R's ... parameter!
+
+         2) the ... parameter is optional
+
+         3) The function must return a data.frame.
 }
 \examples{
 growth <- function(n, r, K, b) {

@@ -2,7 +2,5 @@
 
 export(run)
 import(assertthat)
-importFrom(dplyr,"%>%")
 importFrom(dplyr,do_)
 importFrom(dplyr,rowwise)
-importFrom(lazyeval,interp)

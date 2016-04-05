@@ -12,8 +12,7 @@ URL: https://github.com/ashander/runr
 BugReports: https://github.com/ashander/runr/issues
 Imports:
     dplyr (>= 0.4.3),
-    assertthat (>= 0.1),
-    lazyeval (>= 0.1.10)
+    assertthat (>= 0.1)
 RoxygenNote: 5.0.1
 Suggests: testthat (>= 0.11.0),
     knitr,
