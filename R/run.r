@@ -15,7 +15,7 @@
 #'          3) The function must return a data.frame.
 #' @return a data.frame equivalent (tbl_df) including the columns of data and
 #' the return from `fun`
-#' @importFrom dplyr do_ rowwise
+#' @importFrom dplyr do_ rowwise ungroup
 #' @examples
 #' growth <- function(n, r, K, b) {
 #'   # Ricker-like growth curve in n = log N
@@ -43,7 +43,7 @@
 #' head(cbind(data, output))
 #' @export
 
-run <- function(data, fun, fixed_parameters, ...) {
+run <- function(data, fun, fixed_parameters, add_data=FALSE, ...) {
   assert_that(is.environment(fixed_parameters) || is.list(fixed_parameters),
               is.function(fun),
               is.data.frame(data),
@@ -57,7 +57,11 @@ run <- function(data, fun, fixed_parameters, ...) {
       assert_that(length(fun_args) == ncol(data) + 2)
 
   fixed_parameters <- as.environment(fixed_parameters)
-  grouped_out <- do_(rowwise(data), ~ do.call(fun, c(., fixed_parameters, ...)))
+  if (add_data)
+    grouped_out <- do_(rowwise(data), ~ data.frame(., do.call(fun, c(., fixed_parameters, ...))))
+  else
+    grouped_out <- do_(rowwise(data), ~ do.call(fun, c(., fixed_parameters, ...)))
+
   ungroup(grouped_out)
 }
 

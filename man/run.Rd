@@ -4,7 +4,7 @@
 \alias{run}
 \title{Run a simulation function}
 \usage{
-run(data, fun, fixed_parameters, ...)
+run(data, fun, fixed_parameters, add_data = FALSE, ...)
 }
 \arguments{
 \item{data}{a data.frame (or tibble, in future)}
